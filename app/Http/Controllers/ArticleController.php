@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
+use App\Models\User;
 use Illuminate\Http\Request;
+use App\Mail\ArticleCreated;
+use Illuminate\Support\Facades\Mail;
 
 class ArticleController extends Controller
 {
@@ -31,11 +34,14 @@ class ArticleController extends Controller
             'desc' => 'required|min:10',
         ]);
 
-        Article::create([
+        $article = Article::create([
             'name' => $request->name,
             'desc' => $request->desc,
             'preview_image' => 'preview.jpg',
         ]);
+
+        $moderator = User::where('role', 'moderator')->first();
+        Mail::to($moderator->email)->send(new ArticleCreated($article));
 
         return redirect('/articles');
     }
