@@ -29,6 +29,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/comments/{id}/reject', [CommentController::class, 'reject']);
 });
 
+Route::get('/articles/{id}/read/{notificationId}', [ArticleController::class, 'readNotification'])->middleware('auth:sanctum');
+
 Route::get('/articles/{id}', [ArticleController::class, 'show']);
 
 Route::get('/about', function () {

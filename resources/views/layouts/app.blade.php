@@ -18,6 +18,22 @@
                 <a href="/articles/create">Добавить статью</a> |
                 <a href="/moderation">Модерация</a> |
             @endif
+
+            @if(Auth::user()->role === 'reader')
+                <?php $notifications = Auth::user()->unreadNotifications; ?>
+                Уведомления ({{ $notifications->count() }}):
+                @if($notifications->count() > 0)
+                    <select onchange="window.location.href=this.value">
+                        <option>-- выбрать --</option>
+                        @foreach($notifications as $notification)
+                            <option value="/articles/{{ $notification->data['article_id'] }}/read/{{ $notification->id }}">
+                                {{ $notification->data['article_name'] }}
+                            </option>
+                        @endforeach
+                    </select>
+                @endif
+            @endif
+
             <form action="/logout" method="POST" style="display:inline">
                 @csrf
                 <button type="submit">Выйти ({{ Auth::user()->name }})</button>

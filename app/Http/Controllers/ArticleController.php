@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 use App\Mail\ArticleCreated;
 use Illuminate\Support\Facades\Mail;
 use App\Jobs\VeryLongJob;
+use App\Notifications\NewArticleNotification;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Auth;
 
 class ArticleController extends Controller
 {
@@ -41,9 +44,11 @@ class ArticleController extends Controller
             'preview_image' => 'preview.jpg',
         ]);
 
-        $moderator = User::where('role', 'moderator')->first();
         VeryLongJob::dispatch($article);
         broadcast(new \App\Events\NewArticleEvent($article));
+
+        $readers = User::where('role', 'reader')->get();
+        Notification::send($readers, new NewArticleNotification($article));
 
         return redirect('/articles');
     }
@@ -79,9 +84,17 @@ class ArticleController extends Controller
         $article->delete();
         return redirect('/articles');
     }
+
     public function show($id)
     {
         $article = Article::with('comments.user')->findOrFail($id);
         return view('articles.show', ['article' => $article]);
+    }
+
+    public function readNotification($id, $notificationId)
+    {
+        $notification = Auth::user()->notifications()->findOrFail($notificationId);
+        $notification->markAsRead();
+        return redirect('/articles/' . $id);
     }
 }
