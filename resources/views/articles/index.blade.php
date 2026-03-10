@@ -6,7 +6,7 @@
 
     @foreach($articles as $article)
         <div>
-            <h2>{{ $article->name }}</h2>
+            <h2><a href="/articles/{{ $article->id }}">{{ $article->name }}</a></h2>
             <img src="/{{ $article->preview_image }}" width="200">
             <p>{{ $article->desc }}</p>
             @auth

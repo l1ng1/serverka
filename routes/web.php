@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\CommentController;
 
 Route::get('/', [MainController::class, 'index']);
 Route::get('/gallery/{id}', [MainController::class, 'gallery']);
@@ -13,7 +14,7 @@ Route::post('/signin', [AuthController::class, 'registration']);
 Route::get('/login', [AuthController::class, 'loginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
-
+Route::get('/articles/{id}', [ArticleController::class, 'show']);
 Route::get('/articles', [ArticleController::class, 'index']);
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -22,6 +23,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/articles/{id}/edit', [ArticleController::class, 'edit']);
     Route::put('/articles/{id}', [ArticleController::class, 'update']);
     Route::delete('/articles/{id}', [ArticleController::class, 'destroy']);
+    Route::post('/articles/{id}/comments', [CommentController::class, 'store']);
+    Route::get('/moderation', [CommentController::class, 'moderation']);
+    Route::post('/comments/{id}/approve', [CommentController::class, 'approve']);
+    Route::delete('/comments/{id}/reject', [CommentController::class, 'reject']);
 });
 
 Route::get('/about', function () {

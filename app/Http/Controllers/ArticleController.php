@@ -77,4 +77,9 @@ class ArticleController extends Controller
         $article->delete();
         return redirect('/articles');
     }
+    public function show($id)
+    {
+        $article = Article::with('comments.user')->findOrFail($id);
+        return view('articles.show', ['article' => $article]);
+    }
 }

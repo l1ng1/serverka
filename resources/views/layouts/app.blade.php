@@ -15,6 +15,7 @@
         @auth
             @if(Auth::user()->role === 'moderator')
                 <a href="/articles/create">Добавить статью</a> |
+                <a href="/moderation">Модерация</a> |
             @endif
             <form action="/logout" method="POST" style="display:inline">
                 @csrf
