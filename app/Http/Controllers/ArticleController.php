@@ -43,6 +43,7 @@ class ArticleController extends Controller
 
         $moderator = User::where('role', 'moderator')->first();
         VeryLongJob::dispatch($article);
+        broadcast(new \App\Events\NewArticleEvent($article));
 
         return redirect('/articles');
     }
