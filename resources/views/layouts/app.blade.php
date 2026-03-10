@@ -10,7 +10,17 @@
     <nav>
         <a href="/">Главная</a> |
         <a href="/about">О нас</a> |
-        <a href="/contacts">Контакты</a>
+        <a href="/contacts">Контакты</a> |
+        <a href="/articles">Статьи</a> |
+        @auth
+            <form action="/logout" method="POST" style="display:inline">
+                @csrf
+                <button type="submit">Выйти ({{ Auth::user()->name }})</button>
+            </form>
+        @else
+            <a href="/login">Войти</a> |
+            <a href="/signin">Регистрация</a>
+        @endauth
     </nav>
 </header>
 

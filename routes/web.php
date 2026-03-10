@@ -7,14 +7,22 @@ use App\Http\Controllers\ArticleController;
 
 Route::get('/', [MainController::class, 'index']);
 Route::get('/gallery/{id}', [MainController::class, 'gallery']);
+
 Route::get('/signin', [AuthController::class, 'create']);
 Route::post('/signin', [AuthController::class, 'registration']);
+Route::get('/login', [AuthController::class, 'loginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+
 Route::get('/articles', [ArticleController::class, 'index']);
-Route::get('/articles/create', [ArticleController::class, 'create']);
-Route::post('/articles', [ArticleController::class, 'store']);
-Route::get('/articles/{id}/edit', [ArticleController::class, 'edit']);
-Route::put('/articles/{id}', [ArticleController::class, 'update']);
-Route::delete('/articles/{id}', [ArticleController::class, 'destroy']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/articles/create', [ArticleController::class, 'create']);
+    Route::post('/articles', [ArticleController::class, 'store']);
+    Route::get('/articles/{id}/edit', [ArticleController::class, 'edit']);
+    Route::put('/articles/{id}', [ArticleController::class, 'update']);
+    Route::delete('/articles/{id}', [ArticleController::class, 'destroy']);
+});
 
 Route::get('/about', function () {
     return view('about');
