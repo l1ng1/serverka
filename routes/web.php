@@ -10,6 +10,11 @@ Route::get('/gallery/{id}', [MainController::class, 'gallery']);
 Route::get('/signin', [AuthController::class, 'create']);
 Route::post('/signin', [AuthController::class, 'registration']);
 Route::get('/articles', [ArticleController::class, 'index']);
+Route::get('/articles/create', [ArticleController::class, 'create']);
+Route::post('/articles', [ArticleController::class, 'store']);
+Route::get('/articles/{id}/edit', [ArticleController::class, 'edit']);
+Route::put('/articles/{id}', [ArticleController::class, 'update']);
+Route::delete('/articles/{id}', [ArticleController::class, 'destroy']);
 
 Route::get('/about', function () {
     return view('about');
