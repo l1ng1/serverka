@@ -15,11 +15,17 @@ class ArticleController extends Controller
 
     public function create()
     {
+        if (auth()->user()->role !== 'moderator') {
+            abort(403, 'Доступ запрещён');
+        }
         return view('articles.create');
     }
 
     public function store(Request $request)
     {
+        if (auth()->user()->role !== 'moderator') {
+            abort(403, 'Доступ запрещён');
+        }
         $request->validate([
             'name' => 'required|min:3',
             'desc' => 'required|min:10',
@@ -37,17 +43,19 @@ class ArticleController extends Controller
     public function edit($id)
     {
         $article = Article::findOrFail($id);
+        $this->authorize('update', $article);
         return view('articles.edit', ['article' => $article]);
     }
 
     public function update(Request $request, $id)
     {
+        $article = Article::findOrFail($id);
+        $this->authorize('update', $article);
         $request->validate([
             'name' => 'required|min:3',
             'desc' => 'required|min:10',
         ]);
 
-        $article = Article::findOrFail($id);
         $article->update([
             'name' => $request->name,
             'desc' => $request->desc,
@@ -58,7 +66,9 @@ class ArticleController extends Controller
 
     public function destroy($id)
     {
-        Article::findOrFail($id)->delete();
+        $article = Article::findOrFail($id);
+        $this->authorize('delete', $article);
+        $article->delete();
         return redirect('/articles');
     }
 }

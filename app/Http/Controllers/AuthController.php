@@ -52,12 +52,12 @@ class AuthController extends Controller
         return back()->withErrors(['email' => 'Неверный email или пароль']);
     }
 
-    public function logout(Request $request)
-    {
-        $request->user()->tokens()->delete();
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        return redirect('/');
-    }
+   public function logout(Request $request)
+{
+    Auth::user()->tokens()->delete();
+    Auth::guard('web')->logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+    return redirect('/');
+}
 }

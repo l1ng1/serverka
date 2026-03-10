@@ -2,7 +2,6 @@
 
 @section('content')
     <h1>Статьи</h1>
-    <a href="/articles/create">Добавить статью</a>
     <hr>
 
     @foreach($articles as $article)
@@ -10,12 +9,16 @@
             <h2>{{ $article->name }}</h2>
             <img src="/{{ $article->preview_image }}" width="200">
             <p>{{ $article->desc }}</p>
-            <a href="/articles/{{ $article->id }}/edit">Редактировать</a>
-            <form action="/articles/{{ $article->id }}" method="POST" style="display:inline">
-                @csrf
-                @method('DELETE')
-                <button type="submit" onclick="return confirm('Удалить?')">Удалить</button>
-            </form>
+            @auth
+                @if(Auth::user()->role === 'moderator')
+                    <a href="/articles/{{ $article->id }}/edit">Редактировать</a>
+                    <form action="/articles/{{ $article->id }}" method="POST" style="display:inline">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" onclick="return confirm('Удалить?')">Удалить</button>
+                    </form>
+                @endif
+            @endauth
         </div>
         <hr>
     @endforeach

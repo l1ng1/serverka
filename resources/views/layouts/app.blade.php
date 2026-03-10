@@ -13,6 +13,9 @@
         <a href="/contacts">Контакты</a> |
         <a href="/articles">Статьи</a> |
         @auth
+            @if(Auth::user()->role === 'moderator')
+                <a href="/articles/create">Добавить статью</a> |
+            @endif
             <form action="/logout" method="POST" style="display:inline">
                 @csrf
                 <button type="submit">Выйти ({{ Auth::user()->name }})</button>
