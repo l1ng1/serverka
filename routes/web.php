@@ -14,7 +14,7 @@ Route::post('/signin', [AuthController::class, 'registration']);
 Route::get('/login', [AuthController::class, 'loginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
-Route::get('/articles/{id}', [ArticleController::class, 'show']);
+
 Route::get('/articles', [ArticleController::class, 'index']);
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -28,6 +28,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/comments/{id}/approve', [CommentController::class, 'approve']);
     Route::delete('/comments/{id}/reject', [CommentController::class, 'reject']);
 });
+
+Route::get('/articles/{id}', [ArticleController::class, 'show']);
 
 Route::get('/about', function () {
     return view('about');

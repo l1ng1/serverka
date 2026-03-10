@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Mail\ArticleCreated;
 use Illuminate\Support\Facades\Mail;
+use App\Jobs\VeryLongJob;
 
 class ArticleController extends Controller
 {
@@ -41,7 +42,7 @@ class ArticleController extends Controller
         ]);
 
         $moderator = User::where('role', 'moderator')->first();
-        Mail::to($moderator->email)->send(new ArticleCreated($article));
+        VeryLongJob::dispatch($article);
 
         return redirect('/articles');
     }
