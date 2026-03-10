@@ -2,9 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MainController;
+use App\Http\Controllers\AuthController;
 
 Route::get('/', [MainController::class, 'index']);
 Route::get('/gallery/{id}', [MainController::class, 'gallery']);
+Route::get('/signin', [AuthController::class, 'create']);
+Route::post('/signin', [AuthController::class, 'registration']);
 
 Route::get('/about', function () {
     return view('about');
