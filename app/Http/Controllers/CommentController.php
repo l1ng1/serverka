@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Comment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class CommentController extends Controller
 {
@@ -37,7 +38,9 @@ class CommentController extends Controller
         if (auth()->user()->role !== 'moderator') {
             abort(403);
         }
-        Comment::findOrFail($id)->update(['is_approved' => true]);
+        $comment = Comment::findOrFail($id);
+        $comment->update(['is_approved' => true]);
+        Cache::forget('article_' . $comment->article_id);
         return back();
     }
 
@@ -46,7 +49,9 @@ class CommentController extends Controller
         if (auth()->user()->role !== 'moderator') {
             abort(403);
         }
-        Comment::findOrFail($id)->delete();
+        $comment = Comment::findOrFail($id);
+        Cache::forget('article_' . $comment->article_id);
+        $comment->delete();
         return back();
     }
 }

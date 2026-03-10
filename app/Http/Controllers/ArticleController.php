@@ -11,12 +11,16 @@ use App\Jobs\VeryLongJob;
 use App\Notifications\NewArticleNotification;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class ArticleController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $articles = Article::paginate(5);
+        $page = $request->get('page', 1);
+        $articles = Cache::remember('articles_page_' . $page, 60, function () {
+            return Article::paginate(5);
+        });
         return view('articles.index', ['articles' => $articles]);
     }
 
@@ -43,6 +47,11 @@ class ArticleController extends Controller
             'desc' => $request->desc,
             'preview_image' => 'preview.jpg',
         ]);
+
+        $totalPages = ceil(Article::count() / 5);
+        for ($i = 1; $i <= $totalPages; $i++) {
+            Cache::forget('articles_page_' . $i);
+        }
 
         VeryLongJob::dispatch($article);
         broadcast(new \App\Events\NewArticleEvent($article));
@@ -74,6 +83,8 @@ class ArticleController extends Controller
             'desc' => $request->desc,
         ]);
 
+        Cache::flush();
+
         return redirect('/articles');
     }
 
@@ -82,12 +93,17 @@ class ArticleController extends Controller
         $article = Article::findOrFail($id);
         $this->authorize('delete', $article);
         $article->delete();
+
+        Cache::flush();
+
         return redirect('/articles');
     }
 
     public function show($id)
     {
-        $article = Article::with('comments.user')->findOrFail($id);
+        $article = Cache::rememberForever('article_' . $id, function () use ($id) {
+            return Article::with('comments.user')->findOrFail($id);
+        });
         return view('articles.show', ['article' => $article]);
     }
 
